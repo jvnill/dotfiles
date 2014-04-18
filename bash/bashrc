@@ -1,0 +1,313 @@
+# System-wide .bashrc file for interactive bash(1) shells.
+
+# To enable the settings / commands in this file for login shells as well,
+# this file has to be sourced in /etc/profile.
+
+# If not running interactively, don't do anything
+[ -z "$PS1" ] && return
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, overwrite the one in /etc/profile)
+#PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+
+# Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
+# If this is an xterm set the title to user@host:dir
+#case "$TERM" in
+#xterm*|rxvt*)
+#    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
+#    ;;
+#*)
+#    ;;
+#esac
+
+# enable bash completion in interactive shells
+if [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+fi
+
+# sudo hint
+if [ ! -e $HOME/.sudo_as_admin_successful ]; then
+    case " $(groups) " in *\ admin\ *)
+    if [ -x /usr/bin/sudo ]; then
+	cat <<-EOF
+	To run a command as administrator (user "root"), use "sudo <command>".
+	See "man sudo_root" for details.
+
+	EOF
+    fi
+    esac
+fi
+
+# if the command-not-found package is installed, use it
+if [ -x /usr/lib/command-not-found ]; then
+	function command_not_found_handle {
+	        # check because c-n-f could've been removed in the meantime
+                if [ -x /usr/lib/command-not-found ]; then
+		   /usr/bin/python /usr/lib/command-not-found -- $1
+                   return $?
+		else
+		   return 127
+		fi
+	}
+fi
+
+# base-files version 3.7-1
+
+# To pick up the latest recommended .bashrc content,
+# look in /etc/defaults/etc/skel/.bashrc
+
+# Modifying /etc/skel/.bashrc directly will prevent
+# setup from updating it.
+
+# The copy in your home directory (~/.bashrc) is yours, please
+# feel free to customise it to create a shell
+# environment to your liking.  If you feel a change
+# would be benificial to all, please feel free to send
+# a patch to the cygwin mailing list.
+
+# User dependent .bashrc file
+
+# Shell Options
+
+# See man bash for more options...
+
+# Don't wait for job termination notification
+# set -o notify
+
+# Don't use ^D to exit
+# set -o ignoreeof
+
+# Use case-insensitive filename globbing
+# shopt -s nocaseglob
+
+# Make bash append rather than overwrite the history on disk
+shopt -s histappend
+
+# When changing directory small typos can be ignored by bash
+# for example, cd /vr/lgo/apaache would find /var/log/apache
+# shopt -s cdspell
+
+# Completion options
+
+# These completion tuning parameters change the default behavior of bash_completion:
+
+# Define to access remotely checked-out files over passwordless ssh for CVS
+# COMP_CVS_REMOTE=1
+
+# Define to avoid stripping description in --option=description of './configure --help'
+# COMP_CONFIGURE_HINTS=1
+
+# Define to avoid flattening internal contents of tar files
+# COMP_TAR_INTERNAL_PATHS=1
+
+# If this shell is interactive, turn on programmable completion enhancements.
+# Any completions you add in ~/.bash_completion are sourced last.
+# case $- in
+#   *i*) [[ -f /etc/bash_completion ]] && . /etc/bash_completion ;;
+# esac
+
+# History Options
+# ###############
+
+# Don't put duplicate lines in the history.
+# export HISTCONTROL="ignoredups"
+
+# Ignore some controlling instructions
+# export HISTIGNORE="[   ]*:&:bg:fg:exit"
+
+# Whenever displaying the prompt, write the previous line to disk
+# export PROMPT_COMMAND="history -a"
+
+# Functions
+function settitle() {
+  echo -e "\033[32m$1"
+  tput sgr0;
+}
+
+function seterror() {
+  echo -e "\033[31m$1"
+  tput sgr0;
+}
+
+function gl() {
+  if [[ -z "$1" ]]; then
+    seterror "Please supply a branch to pull from"
+  else
+    settitle "Pulling from $1";
+    git pull origin "$1";
+  fi
+}
+
+function gp() {
+  if [[ -z "$1" ]]; then
+    seterror "Please supply a branch to push to"
+  else
+    settitle "Pushing to $1";
+    git push origin "$1";
+  fi
+}
+
+function rubberd() {
+  if [[ -z "$1" ]]; then
+    seterror "Please supply an environment to deploy to"
+  else
+    settitle "$1 deploy usign Rubber";
+    RUBBER_ENV="$1" cap deploy
+  fi
+}
+
+function rubberdm() {
+  if [[ -z "$1" ]]; then
+    seterror "Please supply an environment to deploy to"
+  else
+    settitle "$1 deploy using Rubber with migrations"
+    RUBBER_ENV="$1" cap deploy:migrations
+  fi
+}
+
+function rubberddj() {
+  if [[ -z "$1" ]]; then
+    seterror "Please supply an environment to deploy to"
+  else
+    settitle "$1 restart DJ using Rubber"
+    RUBBER_ENV="$1" cap delayed_job:restart
+  fi
+}
+
+function sshadd() {
+  ssh-add ~/.ec2/fcta
+  ssh-add ~/.ec2/fls
+  ssh-add ~/.ec2/moneywise
+  #ssh-add ~/.ec2/micropower_us_west
+  #ssh-add ~/.ec2/netengine
+  #ssh-add ~/.ec2/netengine-us-west.pem
+}
+
+function serdeb() {
+  if [[ -z "$1" ]]; then
+    rails s --debugger
+  else
+    rails s -p $1 --debugger
+  fi
+}
+
+function condeb() {
+  if [[ -z "$1" ]]; then
+    rails c --debugger
+  else
+    rails c $1 --debugger
+  fi
+}
+
+function cb() {
+  if [[ -z "$1" ]]; then
+    seterror "Please supply a branch name"
+  else
+    git branch $1 remotes/origin/$1
+  fi
+}
+
+# RAILS SHORTCUTS
+alias server='ruby script/server --debugger'
+alias console='ruby script/console'
+alias db='script/dbconsole'
+alias q='exit'
+
+# GIT SHORTCUTS
+alias gd='git diff'
+alias gs='git status'
+alias gb='git branch'
+alias co='git checkout'
+alias add='git add'
+alias com='git commit'
+alias gpm='settitle "Pushing to Master" && git push origin master'
+alias glm='settitle "Pulling from Master" && git pull origin master'
+alias gpp='settitle "Pushing to Production" && git push origin production'
+alias glp='settitle "Pulling from Production" && git pull origin production'
+alias gps='settitle "Pushing to Staging" && git push origin staging'
+alias gls='settitle "Pulling from Staging" && git pull origin staging'
+alias m='settitle "Merging without fastforward" && git merge --no-ff'
+alias res='settitle "Resetting HEAD" && git reset --soft HEAD^'
+alias stash='settitle "Stashing changes" && git stash'
+alias stapp='settitle "Applying stashed changes" && git stash apply'
+alias gll='git log --graph --pretty=format:'\''%Cred%h%Creset -%C(yellow)%d%Creset %Cblue%an%Creset - %s %Cgreen(%cr)%Creset'\'' --abbrev-commit --date=relative'
+
+alias rkd='settitle "Dropping database..." && rake db:drop'
+alias rkc='settitle "Creating database..." && rake db:create'
+alias rkm='settitle "Migrating database..." && rake db:migrate'
+alias rks='settitle "Seeding database..." && rake db:seed'
+alias rkt='settitle "Preparing test db..." && rake db:test:prepare'
+alias rst='settitle "Running bundle exec rspec..." && bundle exec rspec spec'
+alias rsp='rkd && rkc && rkm && rkt && rst'
+
+alias rkr='rkd && rkc && rkm'
+alias rkrs='rkr && rks'
+alias run_spec_suite='rkr && rkt && rsp'
+
+alias cpd='settitle "Deploying Production" && cap production deploy:migrations'
+alias cpdj='settitle "Restarting Delayed Job" && cap production delayed_job:restart'
+alias cpddj='cpd && cpdj'
+
+alias csd='settitle "Deploying Staging" && cap staging deploy:migrations'
+alias csdj='settitle "Restarting Delayed Job" && cap staging delayed_job:restart'
+alias csddj='csd && csdj'
+
+# MISCELLANEOUS
+alias hg='history | grep'
+alias ls='ls --color'
+alias sb='source ~/.bashrc'
+alias rake='bundle exec rake'
+
+# HEROKU
+alias hb='wget `heroku pgbackups:url`'
+
+# PROJECTS
+alias mw='cd /home/jim/work/moneywise'
+alias trigger='cd /home/jim/work/triggerapp'
+alias hw='cd /home/jim/work/healthwise'
+alias fls='cd /home/jim/work/groundmeat'
+alias ttl='cd /home/jim/work/tee_times_lite'
+alias txt='cd /home/jim/work/textuate/src/smsapp'
+alias sw='cd /home/jim/work/tee_times_lite_soap_wrapper'
+alias ta='cd /home/jim/work/travel_academy'
+alias lms='cd /home/jim/work/lms'
+alias lumeo='cd /home/jim/work/lumeo'
+alias inakent='cd /home/jim/work/inakent'
+
+# RUBBER aliases
+alias rubberds='settitle "Staging deploy using Rubber" && RUBBER_ENV=staging cap deploy'
+alias rubberdsm='settitle "Staging deploy using Rubber with migrations" && RUBBER_ENV=staging cap deploy:migrations'
+alias rubberdsdj='settitle "Staging restart DJ using Rubber" && RUBBER_ENV=staging cap delayed_job:restart'
+alias rubberdp='settitle "Production deploy using Rubber" && RUBBER_ENV=production cap deploy'
+alias rubberdpm='settitle "Production deploy using Rubber with migrations" && RUBBER_ENV=production cap deploy:migrations'
+alias rubberdpdj='settitle "Production restart DJ using Rubber" && RUBBER_ENV=production cap delayed_job:restart'
+
+# need to define this here since it uses some aliases
+function pgdbr() {
+  if [[ -z "$1" ]]; then
+    seterror "Please supply a valid sql path"
+  else
+    rkd && rkc && settitle "Dumping $1" && pg_restore --verbose --clean --no-acl --no-owner -d lumeo_development $1 && rkm
+  fi
+}
+
+function dbr() {
+  if [[ -z "$1" ]]; then
+    seterror "Please supply a valid sql path"
+  else
+    tar -xvzf $1.tar.gz && rkd && rkc && settitle "Dumping $1" && mysql -u root -pninelle triggerapp_development < $1.sql && rm $1.sql && rkm && rake dev:clear_avatars
+  fi
+}
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
+
+. ~/.git_bash_prompt

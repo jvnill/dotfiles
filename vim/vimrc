@@ -1,0 +1,159 @@
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle, required
+Plugin 'gmarik/vundle'
+
+filetype plugin indent on     " required
+
+set nowrap
+
+" allow backspacing over everything in insert mode
+set backspace=eol,start,indent
+
+set autoindent
+
+if has("vms")
+  set nobackup  "do not keep backup, use versions instead
+else
+  set backup    "keep backup
+endif
+
+set history=50
+set ruler       "always show cursor
+set showcmd     "display incomplete commands
+set incsearch   "do incremental searching
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" Switch syntax highlighting on when the terminal has colors
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+"Only do this part when compiled with support for autocommands
+if has("autocmd")
+  "Enable file detection
+  "Use default filetype settings, so that mail gets 'tw' set ot 72,
+  "'cindent' is on in C files, etc
+  "Also load indent files, to automatically do language-dependent indenting.
+  filetype plugin indent on
+  "For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+
+  "When editing a file, always jump to the last known cursor position.
+  "Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim)
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g'\"" |
+    \ endif
+
+endif "has("autocmd")
+
+" My Options
+
+set number
+set ignorecase                  "ignore case when searching
+set shiftwidth=2
+set tabstop=2
+set whichwrap=b,s,h,l,<,>,[,]   "left/right wrap to prev/next line
+set listchars=tab:>-,trail:-    "tab/trail chars if :set list is on
+set backupdir=~/backup/vim
+set expandtab
+set wildmode=list:longest,full  "autocompletion style
+
+set hidden      "do not require saving before opening another file/buffer
+set nostartofline
+
+" Mappings
+map <F1> :w<CR>
+imap <F1> <ESC>:w<CR>a
+map <F2> :set invwrap<CR>
+imap <F2> <ESC>:set invwrap<CR>a
+map <F3> :set invnu<CR>
+imap <F3> <ESC>:set invnu<CR>a
+map <F4> :noh<CR>
+imap <F4> <ESC>:noh<CR>a
+map <F5> :buffers<CR>
+imap <F5> <ESC>:buffers<CR>
+
+map :pp :prev
+map :W :w
+map :Q :q
+
+map <C-Z> u
+imap <C-Z> <ESC>ua
+
+
+map <C-X> <C-^>
+imap <C-X> <ESC><C-^>a
+
+imap <C-B> <Right><ESC>bi
+imap <C-W> <Right><ESC>wi
+
+map <A-PageUp> :bprev<CR>
+map <A-PageDown> :bn<CR>
+
+map <Up> gk
+imap <Up> <C-o>gk
+map <Down> gj
+imap <Down> <C-o>gj
+
+map <C-l> /LC_USER_FLAGS=<CR>wli-Wl,-rpath <ESC>:w<CR>
+
+"maps <Tab>: start/continue a CTRL-N completion operation is the 
+"cursor is in a non-word character and previous character is a word char
+"otherwise, just insert a <Tab>
+function! CleverTab()
+  if ((col('.') > 1) && strpart(getline('.'), col('.')-2, 2) =~ '\w\W') || ((col('.') == col('$')) && strpart(getline('.'), col('.')-2, 1) =~ '\w')
+    return "\<C-N>"
+  else
+    return "\<Tab>"
+endfunction
+inoremap <Tab> <C-R>=CleverTab()<CR>
+
+"set tags = /path/tags
+
+"comment out line
+map <F7> I/* <ESC>A */<ESC>0
+"uncomment current line
+map <F8> $?\/\*<CR>dw/\*\/<CR>dw0:noh<CR>
+"copy current line then comment it out
+map <F9> yypkI/* <ESC>A */<ESC>j0
+
+map <F12> 78i=<ESC>yypA*/<ESC>kI/*<ESC>o<Tab>
+
+set pastetoggle=<F12>          " pastetoggle (sane indentation on pastes)
+                               "   just press F12 when you are going to
+                               "   paste several lines of text so they won't
+                               "   be indented
+                               "   When in paste mode, everything is inserted
+                               "   literally.
+
+map <ESC>[8~  <End>
+map <ESC>[7~  <Home>
+imap <ESC>[8~ <End>
+imap <ESC>[7~ <Home>
+
+set enc=utf-8
+set fenc=utf-8
+
+au BufRead,BufNewFile *.thor set filetype=ruby
+
+" Highlight trailing whitespace
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
+
+" no auto wrap
+set textwidth=0

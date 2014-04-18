@@ -1,0 +1,24 @@
+[global_config]
+  enabled_plugins = CustomCommandsMenu, LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
+  title_transmit_fg_color = "#ffb8b8"
+[keybindings]
+[profiles]
+  [[default]]
+    scrollbar_position = hidden
+    use_system_font = False
+    font = Monospace 9
+    background_image = None
+    foreground_color = "#f88297"
+    login_shell = True
+    show_titlebar = False
+    copy_on_selection = True
+    scrollback_infinite = True
+[layouts]
+  [[default]]
+    [[[child1]]]
+      type = Terminal
+      parent = window0
+    [[[window0]]]
+      type = Window
+      parent = ""
+[plugins]

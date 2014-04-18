@@ -1,0 +1,15 @@
+[color]
+	interactive = always
+	diff = always
+	status = always
+	branch = always
+[user]
+	name = Jim Ruther Nill
+	email = jvnill@gmail.com
+[core]
+  excludesfile = /home/jim/.gitignore
+  editor = vim
+[gc]
+	auto = 1
+[alias]
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative

@@ -1,0 +1,62 @@
+        RED="\[\033[0;31m\]"
+     YELLOW="\[\033[0;33m\]"
+      GREEN="\[\033[0;32m\]"
+       BLUE="\[\033[0;34m\]"
+  LIGHT_RED="\[\033[1;31m\]"
+LIGHT_GREEN="\[\033[1;32m\]"
+ LIGHT_BLUE="\[\033[1;34m\]"
+      WHITE="\[\033[1;37m\]"
+ LIGHT_GRAY="\[\033[0;37m\]"
+ COLOR_NONE="\[\e[0m\]"
+
+
+function git_branch {
+  local git_status="$(git status 2> /dev/null)"
+  local pattern="^On branch ([^${IFS}]*)"
+
+  if [[ $git_status =~ $pattern ]]; then
+    local branch=${BASH_REMATCH[1]}
+    echo "($branch)"
+  fi
+}
+
+# Set color based on clean/staged/dirty.
+function git_color {
+  git_status="$(git status 2> /dev/null)"
+
+  if [[ ${git_status} =~ "working directory clean" ]]; then
+    echo "${GREEN}"
+  elif [[ ${git_status} =~ "Changes to be committed" ]]; then
+    echo "${YELLOW}"
+  else
+    echo "${RED}"
+  fi
+}
+
+# Set arrow icon based on status against remote.
+function git_remote_status {
+  remote_pattern="# Your branch is (.*) of"
+
+  if [[ ${git_status} =~ ${remote_pattern} ]]; then
+    if [[ ${BASH_REMATCH[1]} == "ahead" ]]; then
+      echo "↑"
+    else
+      echo "↓"
+    fi
+  else
+    echo ""
+  fi
+
+  diverge_pattern="# Your branch and (.*) have diverged"
+
+  if [[ ${git_status} =~ ${diverge_pattern} ]]; then
+    echo "↕"
+  fi
+}
+
+function set_git_branch {
+  GIT_BRANCH="$(git_color)$(git_branch)$(git_remote_status)"
+  PS1="${LIGHT_GREEN}\u@\h${COLOR_NONE}:${LIGHT_BLUE}\w${GIT_BRANCH}${RED}\$ ${COLOR_NONE}"
+}
+
+PROMPT_COMMAND=set_git_branch

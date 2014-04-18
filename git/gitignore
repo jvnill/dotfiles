@@ -1,0 +1,9 @@
+*.swp
+.rvmrc
+.ruby-version
+.bundle
+database.yml
+Procfile
+quiet_assets.rb
+TODO
+*.tar.gz
