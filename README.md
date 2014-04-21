@@ -17,6 +17,10 @@
   echo "source $HOME/.rvm/scripts/rvm" >> ~/.bash_profile
   source /home/jim/.rvm/scripts/rvm
   rvm install 2.1.1
+
+  # if running rails 2 and the following error occurs, install rubygems 1.8.25
+  # undefined method `source_index' for Gem:Module
+  rvm rubygems 1.8.25 --force
 ```
 
 ## load dotfiles
