@@ -4,8 +4,8 @@
 	status = always
 	branch = always
 [user]
-	name = Jim Ruther Nill
-	email = jvnill@gmail.com
+	name = <name here>
+	email = <email here>
 [core]
   excludesfile = /home/jim/.gitignore
   editor = vim
