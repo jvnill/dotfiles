@@ -1,5 +1,6 @@
 [global_config]
   enabled_plugins = CustomCommandsMenu, LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
+  inactive_color_offset = 1.0
   title_transmit_fg_color = "#ffb8b8"
 [keybindings]
 [profiles]
