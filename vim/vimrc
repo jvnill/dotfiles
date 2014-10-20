@@ -108,7 +108,7 @@ imap <Down> <C-o>gj
 
 map <C-l> /LC_USER_FLAGS=<CR>wli-Wl,-rpath <ESC>:w<CR>
 
-"maps <Tab>: start/continue a CTRL-N completion operation is the 
+"maps <Tab>: start/continue a CTRL-N completion operation is the
 "cursor is in a non-word character and previous character is a word char
 "otherwise, just insert a <Tab>
 function! CleverTab()
@@ -167,4 +167,9 @@ function! TrimWhiteSpace()
   %s/\s\+$//e
 endfunction
 
+function! CreateDirectory()
+  execute ':silent !mkdir -p %:h'
+endfunction
+
 autocmd BufWritePre     *.* :call TrimWhiteSpace()
+autocmd BufWritePre     *.* :call CreateDirectory()
