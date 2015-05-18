@@ -56,7 +56,8 @@ function git_remote_status {
 
 function set_git_branch {
   GIT_BRANCH="$(git_color)$(git_branch)$(git_remote_status)"
-  PS1="${LIGHT_GREEN}\u@\h${COLOR_NONE}:${LIGHT_BLUE}\w${GIT_BRANCH}${RED}\$ ${COLOR_NONE}"
+  #PS1="${LIGHT_GREEN}\u@\h${COLOR_NONE}:${LIGHT_BLUE}\w${GIT_BRANCH}${RED}\$ ${COLOR_NONE}"
+  PS1="${LIGHT_GREEN}jim${COLOR_NONE}:${LIGHT_BLUE}\w${GIT_BRANCH}${RED}\$ ${COLOR_NONE}"
 }
 
 PROMPT_COMMAND=set_git_branch

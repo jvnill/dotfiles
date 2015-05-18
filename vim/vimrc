@@ -7,6 +7,9 @@ call vundle#rc()
 
 " let Vundle manage Vundle, required
 Plugin 'gmarik/vundle'
+Plugin 'slim-template/vim-slim.git'
+Plugin 'heartsentwined/vim-emblem'
+Plugin 'groenewege/vim-less'
 
 filetype plugin indent on     " required
 
@@ -83,6 +86,7 @@ map <F4> :noh<CR>
 imap <F4> <ESC>:noh<CR>a
 map <F5> :buffers<CR>
 imap <F5> <ESC>:buffers<CR>
+map :ws :call TrimWhiteSpace()
 
 map :pp :prev
 map :W :w
@@ -171,5 +175,5 @@ function! CreateDirectory()
   execute ':silent !mkdir -p %:h'
 endfunction
 
-autocmd BufWritePre     *.* :call TrimWhiteSpace()
+"autocmd BufWritePre     *.* :call TrimWhiteSpace()
 autocmd BufWritePre     *.* :call CreateDirectory()
